@@ -18,15 +18,15 @@ namespace FuncTest
         }
 
         [Fact]
-        public async Task ShouldProvideReqCountMetric()
+        public async Task ShouldExposeRequestCount()
         {
             //Arrange
-            await TestCall(srv => srv.Get(0));
             var reqCounterName = CreateMetricName(
                 HttpMetricConstants.RequestReceivedMetricName, 
                 "GET", 
                 "/api/test/get/xxx/data",
                 "200");
+            await TestCall(srv => srv.Get(0));
 
             //Act
             var metrics = await TestCall(srv => srv.GetMetrics());
@@ -48,7 +48,7 @@ namespace FuncTest
         Task Get([Path]int id);
 
         [Post("api/test/post/{id}/data")]
-        Task Post([Path]int id);
+        Task Post([Path]int id, [JsonContent]string data);
 
         [Get("metrics")]
         Task<string> GetMetrics();

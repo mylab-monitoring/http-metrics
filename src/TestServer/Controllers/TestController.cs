@@ -14,10 +14,9 @@ namespace TestServer.Controllers
         }
 
         [HttpPost("post/{id}/data")]
-        public IActionResult Post(int id)
+        public IActionResult Post(int id, [FromBody]string data)
         {
-            return Ok(
-                "this is payload this is payload");
+            return Ok(data);
         }
     }
 }
