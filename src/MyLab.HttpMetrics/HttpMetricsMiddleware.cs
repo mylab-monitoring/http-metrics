@@ -19,7 +19,7 @@ namespace MyLab.HttpMetrics
             _logger = logger.Dsl();
         }
 
-        public async Task Invoke(HttpContext httpContext, HttpMetricReporter reporter)
+        public async Task Invoke(HttpContext httpContext, IHttpMetricReporter reporter)
         {
             var path = httpContext.Request.Path.Value;
             if (path == "/metrics")

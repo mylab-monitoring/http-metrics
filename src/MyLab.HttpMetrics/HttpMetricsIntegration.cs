@@ -13,7 +13,14 @@ namespace MyLab.HttpMetrics
         {
             if (srv == null) throw new ArgumentNullException(nameof(srv));
 
-            return srv.AddSingleton<HttpMetricReporter>();
+            return srv.AddSingleton<IHttpMetricReporter, HttpMetricReporter>();
+        }
+
+        internal static IServiceCollection AddUrlBasedHttpMetrics(this IServiceCollection srv, IHttpMetricReporter reporter)
+        {
+            if (srv == null) throw new ArgumentNullException(nameof(srv));
+
+            return srv.AddSingleton<IHttpMetricReporter>(reporter);
         }
 
         public static IApplicationBuilder UseUrlBasedHttpMetrics(this IApplicationBuilder appBuilder)

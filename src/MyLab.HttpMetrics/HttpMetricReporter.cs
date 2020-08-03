@@ -3,7 +3,7 @@ using Prometheus;
 
 namespace MyLab.HttpMetrics
 {
-    class HttpMetricReporter
+    class HttpMetricReporter : IHttpMetricReporter
     {
         private readonly Counter _requestCounter;
         private readonly Histogram _requestProcTimeHistogram;
@@ -13,10 +13,7 @@ namespace MyLab.HttpMetrics
         private readonly Counter _requestSizeCounter;
         private readonly Counter _responseSizeCounter;
 
-        /// <summary>
-        /// Initializes a new instance of <see cref="HttpMetricReporter"/>
-        /// </summary>
-        public HttpMetricReporter()
+        public  HttpMetricReporter()
         {
             var labels = new[]
             {
@@ -47,36 +44,36 @@ namespace MyLab.HttpMetrics
 
             _requestProcTimeHistogram = Metrics.CreateHistogram(
                 HttpMetricConstants.RequestDurationMetricName,
-                "The duration in seconds between the response to a request.", 
+                "The duration in seconds between the response to a request.",
                 new HistogramConfiguration
                 {
-                    Buckets = new []
+                    Buckets = new[]
                     {
-                        0.01,   //10ms
-                        0.02,   //20ms
-                        0.05,   //50ms
-                        0.1,    //100ms
-                        0.2,    //200ms
-                        0.5,    //500ms
-                        1,      //1s
-                        2,      //2s
-                        5,      //3s
-                        10,     //10s
-                        20,     //20s
-                        30      //301s
-                    }, 
+                        0.01, //10ms
+                        0.02, //20ms
+                        0.05, //50ms
+                        0.1, //100ms
+                        0.2, //200ms
+                        0.5, //500ms
+                        1, //1s
+                        2, //2s
+                        5, //3s
+                        10, //10s
+                        20, //20s
+                        30 //30s
+                    },
                     LabelNames = labels
                 });
 
             var sizeBuckets = new Double[]
             {
-                1024,           //1kb
-                1024*2,         //2kb
-                1024*5,         //5kb
-                1024*10,        //10kb
-                1024*10*2,      //20kb
-                1024*10*5,      //30kb
-                1024*1024       //1Mb
+                1024, //1kb
+                1024 * 2, //2kb
+                1024 * 5, //5kb
+                1024 * 10, //10kb
+                1024 * 10 * 2, //20kb
+                1024 * 10 * 5, //50kb
+                1024 * 1024 //1Mb
             };
 
 
@@ -101,14 +98,14 @@ namespace MyLab.HttpMetrics
 
         public void Register(MetricMethodRequest methodRequest, MetricMethodResponse resp)
         {
-            var labels = new[] {methodRequest.HttpMethod, methodRequest.UrlPath, resp.ResponseCode};
+            var labels = new[] { methodRequest.HttpMethod, methodRequest.UrlPath, resp.ResponseCode };
 
             _requestCounter.Labels(labels).Inc();
 
-            if(methodRequest.Length.HasValue)
+            if (methodRequest.Length.HasValue)
                 _requestSizeCounter.Labels(labels).Inc(methodRequest.Length.Value);
 
-            if(resp.Length.HasValue)
+            if (resp.Length.HasValue)
                 _responseSizeCounter.Labels(labels).Inc(resp.Length.Value);
 
             _requestProcTimeHistogram.Labels(labels).Observe(resp.ElapsedTime.TotalSeconds);
@@ -119,6 +116,19 @@ namespace MyLab.HttpMetrics
         public void RegisterError()
         {
             _errorCounter.Inc();
+        }
+
+        public void Remove(string method, string path, string status)
+        {
+            var labels = new []{method, path, status};
+
+            _requestCounter.RemoveLabelled(labels);
+            _requestProcTimeHistogram.RemoveLabelled(labels);
+            _requestContentSizeHistogram.RemoveLabelled(labels);
+            _responseContentSizeHistogram.RemoveLabelled(labels);
+            _errorCounter.RemoveLabelled(labels);
+            _requestSizeCounter.RemoveLabelled(labels);
+            _responseSizeCounter.RemoveLabelled(labels);
         }
     }
 }
