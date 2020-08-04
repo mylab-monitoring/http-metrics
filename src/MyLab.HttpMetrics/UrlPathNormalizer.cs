@@ -24,7 +24,7 @@ namespace MyLab.HttpMetrics
 
         private static string MaskVariableParts(string path)
         {
-            var items = path.Split('/').ToList();
+            var items = path.ToLower().Split('/').ToList();
 
             for (int i = 0; i < items.Count; i++)
             {

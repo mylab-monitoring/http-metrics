@@ -23,12 +23,12 @@ namespace MyLab.HttpMetrics
             };
 
             _requestCounter = Metrics.CreateCounter(
-                HttpMetricConstants.RequestReceivedMetricName,
+                HttpMetricConstants.RequestReceivedCounter,
                 "The total number of requests",
                 labels);
 
             _unhandledExceptionCounter = Metrics.CreateCounter(
-                HttpMetricConstants.UnhandledExceptionCount,
+                HttpMetricConstants.UnhandledExceptionCounter,
                 "The total number of unhandled exception",
                 labels);
 

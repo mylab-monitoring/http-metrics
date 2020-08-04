@@ -45,14 +45,13 @@ namespace FuncTest
             var metrics = await TestCall(srv => srv.GetMetrics());
 
             //Assert
-            Assert.Contains("ml_http_unhandled_Exception_count{method=\"GET\",path=\"/api/test/get/exception\",status_code=\"200\"}", metrics.ResponseContent);
+            Assert.Contains("ml_http_unhandled_exception_total{method=\"GET\",path=\"/api/test/get/exception\",status_code=\"200\"}", metrics.ResponseContent);
         }
 
         public static object[][]CreateMetricNames()
         {
             return new []
             {
-                //new object[]{ "ml_http_unhandled_Exception_count", null},
                 new object[]{"ml_http_request_count_total", null},
                 new object[]{"ml_http_request_size_bytes_total", null},
                 new object[]{"ml_http_response_size_bytes_total", null},
