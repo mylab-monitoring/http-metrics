@@ -12,8 +12,6 @@ namespace MyLab.HttpMetrics
         public  Histogram RequestProcTimeHistogram { get; set; }
         public  Histogram RequestContentSizeHistogram { get; set; }
         public  Histogram ResponseContentSizeHistogram { get; set; }
-        public  Counter RequestSizeCounter { get; set; }
-        public  Counter ResponseSizeCounter { get; set; }
         public  Counter UnhandledExceptionCounter { get; set; }
 
         public HttpMetricReporter(MetricMethodRequest request, MetricMethodResponse response)
@@ -27,13 +25,6 @@ namespace MyLab.HttpMetrics
         public void Register()
         {
             RequestCounter.Labels(_labels).Inc();
-
-            if (_request.Length.HasValue)
-                RequestSizeCounter.Labels(_labels).Inc(_request.Length.Value);
-
-            if (_response.Length.HasValue)
-                ResponseSizeCounter.Labels(_labels).Inc(_response.Length.Value);
-
             RequestProcTimeHistogram.Labels(_labels).Observe(_response.ElapsedTime.TotalSeconds);
             RequestContentSizeHistogram.Labels(_labels).Observe(_request.Length ?? 0);
             ResponseContentSizeHistogram.Labels(_labels).Observe(_response.Length ?? 0);

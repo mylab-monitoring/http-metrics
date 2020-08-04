@@ -85,14 +85,6 @@ ml_http_response_content_size_bytes_bucket{method="GET",path="/get/xxx",status_c
 
 Счётчик. Считает количество поступивших запросов.
 
-### `ml_http_request_size_bytes_total`
-
-Счётчик. Считает общий размер поступивших запросов.
-
-### `ml_http_response_size_bytes_total`
-
-Счётчик. Считает общий объём выданных ответов.
-
 ### `ml_http_unhandled_exception_total`
 
 Счётчик. Считает количество необработанных исключений.
