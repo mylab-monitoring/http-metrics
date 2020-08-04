@@ -19,7 +19,7 @@ namespace MyLab.HttpMetrics
             _logger = logger.Dsl();
         }
 
-        public async Task Invoke(HttpContext httpContext, IHttpMetricReporter reporter)
+        public async Task Invoke(HttpContext httpContext, HttpMetricReporterFactory reporterFactory)
         {
             var path = httpContext.Request.Path.Value;
             if (path == "/metrics")
@@ -28,29 +28,30 @@ namespace MyLab.HttpMetrics
                 return;
             }
 
+            var responseContentStreamWrapper = new ContentStreamWrapper(httpContext.Response.Body);
+            httpContext.Response.Body = responseContentStreamWrapper;
+
+            IHttpMetricReporter metricReporter = null;
+
             var sw = Stopwatch.StartNew();
 
             try
             {
                 await _request.Invoke(httpContext);
-            }
-            finally
-            {
+
                 sw.Stop();
 
-                try
-                {
-                    reporter.Register(
-                        MetricMethodRequest.CreateFromHttpContext(httpContext),
-                        MetricMethodResponse.CreateFromHttpContext(httpContext, sw.Elapsed)
-                    );
-                }
-                catch (Exception e)
-                {
-                    _logger.Error("Metric calculation error", e).Write();
-                    reporter.RegisterError();
-                }
+                (metricReporter = CreateReporter()).Register();
             }
+            catch (Exception)
+            {
+                (metricReporter ?? CreateReporter()).RegisterUnhandledException();
+            }
+
+            IHttpMetricReporter CreateReporter() =>
+                reporterFactory.CreateReporter(
+                    MetricMethodRequest.CreateFromHttpContext(httpContext),
+                    MetricMethodResponse.CreateFromHttpContext(httpContext, sw.Elapsed, responseContentStreamWrapper.WriteCounter));
         }
     }
 }

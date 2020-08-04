@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 
 namespace TestServer.Controllers
 {
@@ -6,11 +7,10 @@ namespace TestServer.Controllers
     [ApiController]
     public class TestController : ControllerBase
     {
-        [HttpGet("get/{id}/data")]
-        public IActionResult Get(int id)
+        [HttpGet("get/exception")]
+        public IActionResult Get()
         {
-            return Ok(
-                "this is payload this is payload this is payload this is payload this is payload this is payload ");
+            throw new Exception();
         }
 
         [HttpPost("post/{id}/data")]

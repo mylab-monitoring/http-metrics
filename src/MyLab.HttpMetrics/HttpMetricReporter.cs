@@ -1,134 +1,48 @@
-﻿using System;
-using Prometheus;
+﻿using Prometheus;
 
 namespace MyLab.HttpMetrics
 {
     class HttpMetricReporter : IHttpMetricReporter
     {
-        private readonly Counter _requestCounter;
-        private readonly Histogram _requestProcTimeHistogram;
-        private readonly Histogram _requestContentSizeHistogram;
-        private readonly Histogram _responseContentSizeHistogram;
-        private readonly Counter _errorCounter;
-        private readonly Counter _requestSizeCounter;
-        private readonly Counter _responseSizeCounter;
+        private readonly MetricMethodRequest _request;
+        private readonly MetricMethodResponse _response;
+        private readonly string[] _labels;
 
-        public  HttpMetricReporter()
+    public  Counter RequestCounter { get; set; }
+        public  Histogram RequestProcTimeHistogram { get; set; }
+        public  Histogram RequestContentSizeHistogram { get; set; }
+        public  Histogram ResponseContentSizeHistogram { get; set; }
+        public  Counter RequestSizeCounter { get; set; }
+        public  Counter ResponseSizeCounter { get; set; }
+        public  Counter UnhandledExceptionCounter { get; set; }
+
+        public HttpMetricReporter(MetricMethodRequest request, MetricMethodResponse response)
         {
-            var labels = new[]
-            {
-                HttpMetricConstants.HttpMethodLabel,
-                HttpMetricConstants.HttpPathLabel,
-                HttpMetricConstants.HttpStatusCodeLabel,
-            };
+            _request = request;
+            _response = response;
 
-            _requestCounter = Metrics.CreateCounter(
-                HttpMetricConstants.RequestReceivedMetricName,
-                "The total number of requests",
-                labels);
-
-            _errorCounter = Metrics.CreateCounter(
-                HttpMetricConstants.MetricCollectingErrorCount,
-                "The total number of metric collecting errors",
-                labels);
-
-            _requestSizeCounter = Metrics.CreateCounter(
-                HttpMetricConstants.RequestContentSizeCounter,
-                "The total size of request content",
-                labels);
-
-            _responseSizeCounter = Metrics.CreateCounter(
-                HttpMetricConstants.ResponseContentSizeCounter,
-                "The total size of response content",
-                labels);
-
-            _requestProcTimeHistogram = Metrics.CreateHistogram(
-                HttpMetricConstants.RequestDurationMetricName,
-                "The duration in seconds between the response to a request.",
-                new HistogramConfiguration
-                {
-                    Buckets = new[]
-                    {
-                        0.01, //10ms
-                        0.02, //20ms
-                        0.05, //50ms
-                        0.1, //100ms
-                        0.2, //200ms
-                        0.5, //500ms
-                        1, //1s
-                        2, //2s
-                        5, //3s
-                        10, //10s
-                        20, //20s
-                        30 //30s
-                    },
-                    LabelNames = labels
-                });
-
-            var sizeBuckets = new Double[]
-            {
-                1024, //1kb
-                1024 * 2, //2kb
-                1024 * 5, //5kb
-                1024 * 10, //10kb
-                1024 * 10 * 2, //20kb
-                1024 * 10 * 5, //50kb
-                1024 * 1024 //1Mb
-            };
-
-
-            _requestContentSizeHistogram = Metrics.CreateHistogram(
-                HttpMetricConstants.RequestContentSizeMetricName,
-                "The request content size in bytes.",
-                new HistogramConfiguration
-                {
-                    Buckets = sizeBuckets,
-                    LabelNames = labels
-                });
-
-            _responseContentSizeHistogram = Metrics.CreateHistogram(
-                HttpMetricConstants.ResponseContentSizeMetricName,
-                "The response content size in bytes.",
-                new HistogramConfiguration
-                {
-                    Buckets = sizeBuckets,
-                    LabelNames = labels
-                });
+            _labels = new[] {_request.HttpMethod, _request.UrlPath, _response.ResponseCode};
         }
 
-        public void Register(MetricMethodRequest methodRequest, MetricMethodResponse resp)
+        public void Register()
         {
-            var labels = new[] { methodRequest.HttpMethod, methodRequest.UrlPath, resp.ResponseCode };
+            RequestCounter.Labels(_labels).Inc();
 
-            _requestCounter.Labels(labels).Inc();
+            if (_request.Length.HasValue)
+                RequestSizeCounter.Labels(_labels).Inc(_request.Length.Value);
 
-            if (methodRequest.Length.HasValue)
-                _requestSizeCounter.Labels(labels).Inc(methodRequest.Length.Value);
+            if (_response.Length.HasValue)
+                ResponseSizeCounter.Labels(_labels).Inc(_response.Length.Value);
 
-            if (resp.Length.HasValue)
-                _responseSizeCounter.Labels(labels).Inc(resp.Length.Value);
-
-            _requestProcTimeHistogram.Labels(labels).Observe(resp.ElapsedTime.TotalSeconds);
-            _requestContentSizeHistogram.Labels(labels).Observe(methodRequest.Length ?? 0);
-            _responseContentSizeHistogram.Labels(labels).Observe(resp.Length ?? 0);
+            RequestProcTimeHistogram.Labels(_labels).Observe(_response.ElapsedTime.TotalSeconds);
+            RequestContentSizeHistogram.Labels(_labels).Observe(_request.Length ?? 0);
+            ResponseContentSizeHistogram.Labels(_labels).Observe(_response.Length ?? 0);
         }
 
-        public void RegisterError()
+        public void RegisterUnhandledException()
         {
-            _errorCounter.Inc();
+            UnhandledExceptionCounter.Labels(_labels).Inc();
         }
 
-        public void Remove(string method, string path, string status)
-        {
-            var labels = new []{method, path, status};
-
-            _requestCounter.RemoveLabelled(labels);
-            _requestProcTimeHistogram.RemoveLabelled(labels);
-            _requestContentSizeHistogram.RemoveLabelled(labels);
-            _responseContentSizeHistogram.RemoveLabelled(labels);
-            _errorCounter.RemoveLabelled(labels);
-            _requestSizeCounter.RemoveLabelled(labels);
-            _responseSizeCounter.RemoveLabelled(labels);
-        }
     }
 }

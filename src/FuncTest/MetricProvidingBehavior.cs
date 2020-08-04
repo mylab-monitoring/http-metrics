@@ -35,12 +35,25 @@ namespace FuncTest
             Assert.Contains(expectedMetric, metrics.ResponseContent);
         }
 
+        [Fact]
+        public async Task ShouldExposeUnhandledExceptionMetric()
+        {
+            //Arrange
+            await TestCall(srv => srv.GetException());
+
+            //Act
+            var metrics = await TestCall(srv => srv.GetMetrics());
+
+            //Assert
+            Assert.Contains("ml_http_unhandled_Exception_count{method=\"GET\",path=\"/api/test/get/exception\",status_code=\"200\"}", metrics.ResponseContent);
+        }
+
         public static object[][]CreateMetricNames()
         {
             return new []
             {
+                //new object[]{ "ml_http_unhandled_Exception_count", null},
                 new object[]{"ml_http_request_count_total", null},
-                new object[]{"ml_http_metric_error_count", null},
                 new object[]{"ml_http_request_size_bytes_total", null},
                 new object[]{"ml_http_response_size_bytes_total", null},
 
@@ -91,6 +104,9 @@ namespace FuncTest
     {
         [Post("api/test/post/{id}/data")]
         Task Post([Path]int id, [JsonContent]string data);
+
+        [Get("api/test/get/exception")]
+        Task GetException();
 
         [Get("metrics")]
         Task<string> GetMetrics();

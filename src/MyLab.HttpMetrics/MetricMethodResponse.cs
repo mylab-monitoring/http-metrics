@@ -9,7 +9,7 @@ namespace MyLab.HttpMetrics
         public string ResponseCode { get; set; }
         public long? Length { get; set; }
 
-        public static MetricMethodResponse CreateFromHttpContext(HttpContext ctx, TimeSpan elapsedTime)
+        public static MetricMethodResponse CreateFromHttpContext(HttpContext ctx, TimeSpan elapsedTime, long length)
         {
             if (ctx == null) throw new ArgumentNullException(nameof(ctx));
 
@@ -17,7 +17,7 @@ namespace MyLab.HttpMetrics
             {
                 ElapsedTime = elapsedTime,
                 ResponseCode = ctx.Response.StatusCode.ToString(),
-                Length = ctx.Response.ContentLength
+                Length = length
             };
         }
     }

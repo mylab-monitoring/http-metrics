@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MyLab.HttpMetrics
@@ -9,18 +10,13 @@ namespace MyLab.HttpMetrics
     /// </summary>
     public static class HttpMetricsIntegration
     {
+
         public static IServiceCollection AddUrlBasedHttpMetrics(this IServiceCollection srv)
         {
             if (srv == null) throw new ArgumentNullException(nameof(srv));
 
-            return srv.AddSingleton<IHttpMetricReporter, HttpMetricReporter>();
-        }
-
-        internal static IServiceCollection AddUrlBasedHttpMetrics(this IServiceCollection srv, IHttpMetricReporter reporter)
-        {
-            if (srv == null) throw new ArgumentNullException(nameof(srv));
-
-            return srv.AddSingleton<IHttpMetricReporter>(reporter);
+            return srv
+                .AddSingleton<HttpMetricReporterFactory>();
         }
 
         public static IApplicationBuilder UseUrlBasedHttpMetrics(this IApplicationBuilder appBuilder)
