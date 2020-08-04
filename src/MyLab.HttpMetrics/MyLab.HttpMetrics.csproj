@@ -8,6 +8,9 @@
     <PackageProjectUrl>https://github.com/ozzy-ext-mylab/http-metrics</PackageProjectUrl>
     <RepositoryUrl>https://github.com/ozzy-ext-mylab/http-metrics.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <Version>1.0.1</Version>
+    <AssemblyVersion>1.0.1.0408</AssemblyVersion>
+    <FileVersion>1.0.1.0408</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

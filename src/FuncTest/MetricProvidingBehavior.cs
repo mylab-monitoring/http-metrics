@@ -53,8 +53,6 @@ namespace FuncTest
             return new []
             {
                 new object[]{"ml_http_request_count_total", null},
-                new object[]{"ml_http_request_size_bytes_total", null},
-                new object[]{"ml_http_response_size_bytes_total", null},
 
                 new object[]{"ml_http_request_content_size_bytes_sum", null},
                 new object[]{"ml_http_request_content_size_bytes_count", null},

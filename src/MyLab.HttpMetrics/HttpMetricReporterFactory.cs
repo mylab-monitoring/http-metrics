@@ -9,8 +9,6 @@ namespace MyLab.HttpMetrics
         private readonly Histogram _requestProcTimeHistogram;
         private readonly Histogram _requestContentSizeHistogram;
         private readonly Histogram _responseContentSizeHistogram;
-        private readonly Counter _requestSizeCounter;
-        private readonly Counter _responseSizeCounter;
         private readonly Counter _unhandledExceptionCounter;
 
         public  HttpMetricReporterFactory()
@@ -30,16 +28,6 @@ namespace MyLab.HttpMetrics
             _unhandledExceptionCounter = Metrics.CreateCounter(
                 HttpMetricConstants.UnhandledExceptionCounter,
                 "The total number of unhandled exception",
-                labels);
-
-            _requestSizeCounter = Metrics.CreateCounter(
-                HttpMetricConstants.RequestContentSizeCounter,
-                "The total size of request content",
-                labels);
-
-            _responseSizeCounter = Metrics.CreateCounter(
-                HttpMetricConstants.ResponseContentSizeCounter,
-                "The total size of response content",
                 labels);
 
             _requestProcTimeHistogram = Metrics.CreateHistogram(
@@ -106,9 +94,7 @@ namespace MyLab.HttpMetrics
                 RequestContentSizeHistogram = _requestContentSizeHistogram,
                 RequestCounter = _requestCounter,
                 RequestProcTimeHistogram = _requestProcTimeHistogram,
-                RequestSizeCounter = _requestSizeCounter,
                 ResponseContentSizeHistogram = _responseContentSizeHistogram,
-                ResponseSizeCounter = _responseSizeCounter,
                 UnhandledExceptionCounter = _unhandledExceptionCounter
             };
         }
