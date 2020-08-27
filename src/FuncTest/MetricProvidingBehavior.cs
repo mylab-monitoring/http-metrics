@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,6 +47,20 @@ namespace FuncTest
 
             //Assert
             Assert.Contains("ml_http_unhandled_exception_total{method=\"GET\",path=\"/api/test/get/exception\",status_code=\"200\"}", metrics.ResponseContent);
+        }
+
+        [Fact]
+        public async Task ShouldNotHideExceptions()
+        {
+            //Arrange
+
+
+            //Act
+            var resp = await TestCall(srv => srv.GetException());
+
+            //Assert
+            Assert.Equal(HttpStatusCode.InternalServerError, resp.StatusCode);
+            Assert.True(resp.IsUnexpectedStatusCode);
         }
 
         public static object[][]CreateMetricNames()

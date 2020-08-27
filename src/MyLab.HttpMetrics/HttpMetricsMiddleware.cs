@@ -46,6 +46,8 @@ namespace MyLab.HttpMetrics
             catch (Exception)
             {
                 (metricReporter ?? CreateReporter()).RegisterUnhandledException();
+
+                throw;
             }
 
             IHttpMetricReporter CreateReporter() =>
