@@ -4,13 +4,13 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Andrey O.</Authors>
-    <Copyright>Copyright (c) 2020 Andrey Osintsev &lt;ozzy.ext@gmail.com&gt;</Copyright>
+    <Copyright>Copyright (c) 2021 Andrey Osintsev &lt;ozzy.ext@gmail.com&gt;</Copyright>
     <PackageProjectUrl>https://github.com/ozzy-ext-mylab/http-metrics</PackageProjectUrl>
     <RepositoryUrl>https://github.com/ozzy-ext-mylab/http-metrics.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <Version>1.0.2</Version>
-    <AssemblyVersion>1.0.2.2708</AssemblyVersion>
-    <FileVersion>1.0.2.2708</FileVersion>
+    <Version>1.1.2</Version>
+    <AssemblyVersion>1.1.2.3004</AssemblyVersion>
+    <FileVersion>1.1.2.3004</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
