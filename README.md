@@ -153,3 +153,16 @@ ml_http_response_content_size_bytes_bucket{method="GET",path="/get/xxx",status_c
   * цифр больше остальных символов
   * это `GUID`
   * содержит последовательность из цифр длиной 3 и более
+
+### Нормализация перечислений 
+
+Для нормализации значений перечислений в качестве значений меток можно применять `EnumConverter.ToLabel`. 
+
+Примеры конвертирования:
+
+* `TestEnum.Foo` => "foo"
+* `TestEnum.Foo1` => "foo_1"
+* `TestEnum.Foo2Bar` => "foo_2_bar"
+* `TestEnum.FooBar` => "foo_bar"
+* `TestEnum.Foo | TestEnum.FooBar` => "foo_foo_bar"
+* `(TestEnum)50` => "50"
