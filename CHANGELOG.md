@@ -4,14 +4,14 @@
 
 Формат лога изменений базируется на [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [1.0.1] - 2020-08-04
-
-### Удалено:
-
-* Удалены лишние метрики `ml_http_request_size_bytes_total` и `ml_http_response_size_bytes_total`
-
 ## [1.0.2] - 2020-08-27
 
 Исправлено:
 
 * Игнорировались исключения при выполнении запроса и выдавался ответ `200`.
+
+## [1.0.1] - 2020-08-04
+
+### Удалено:
+
+* Удалены лишние метрики `ml_http_request_size_bytes_total` и `ml_http_response_size_bytes_total`
