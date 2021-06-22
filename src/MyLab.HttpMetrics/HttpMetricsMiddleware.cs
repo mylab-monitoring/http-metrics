@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using MyLab.LogDsl;
+using MyLab.Log.Dsl;
 using Prometheus;
 
 namespace MyLab.HttpMetrics
@@ -11,12 +11,10 @@ namespace MyLab.HttpMetrics
     class HttpMetricsMiddleware
     {
         private readonly RequestDelegate _request;
-        private readonly DslLogger _logger;
 
-        public HttpMetricsMiddleware(RequestDelegate request, ILogger<HttpMetricsMiddleware> logger)
+        public HttpMetricsMiddleware(RequestDelegate request)
         {
             _request = request ?? throw new ArgumentNullException(nameof(request));
-            _logger = logger.Dsl();
         }
 
         public async Task Invoke(HttpContext httpContext, HttpMetricReporterFactory reporterFactory)
