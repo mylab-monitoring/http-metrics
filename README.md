@@ -12,8 +12,9 @@
 
 Для добавления метрик при конфигурировании приложения необходимо с помощью методов расширения:
 
-1. `AddUrlBasedHttpMetrics` - добавить необходимые зависимости 
-2. `UseUrlBasedHttpMetrics` - добавить `middleware` для перехвата и анализа запросов 
+1. `AddUrlBasedHttpMetrics` - добавить необходимые зависимости;
+2. `UseUrlBasedHttpMetrics` - добавить `middleware` для перехвата и анализа запросов;
+3. `MapMetrics` - привязка к адресу по умолчанию `/metrics`.
 
 ```C#
 public class Startup
@@ -36,9 +37,9 @@ public class Startup
         app.UseUrlBasedHttpMetrics();			// <--- 2
 
         app.UseEndpoints(endpoints =>
-		{
-        	endpoints.MapControllers();
-            endpoints.MapMetrics();
+        {
+            endpoints.MapControllers();
+            endpoints.MapMetrics();				// <--- 3
         });
     }
 }
